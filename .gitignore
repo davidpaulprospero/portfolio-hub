@@ -30,8 +30,12 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
+# env files. The trailing `*` also matches `.env.example`, which must be
+# committed - it is the template documenting which vars exist. Negate it
+# explicitly below, or the setup instructions in the README have no template
+# to point at.
 .env*
+!.env.example
 
 # firebase CLI - debug logs can contain auth tokens
 firebase-debug.log
