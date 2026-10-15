@@ -1,0 +1,10 @@
+# Cloudflare Pages redirects.
+#
+# Cloudflare Pages serves `out/` statically and, unlike the Next.js Node
+# server, does not resolve extensionless URLs to their `.html` file for
+# client-side route prefetches. Without these rules, every client-side
+# navigation logs a 404 for the RSC payload before falling back to a full
+# page load. The links work either way - these just stop the noise.
+
+/projects/:slug /projects/:slug.html 200
+/projects/:slug/ /projects/:slug.html 200

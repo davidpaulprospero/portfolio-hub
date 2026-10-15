@@ -1,0 +1,62 @@
+rules_version = '2';
+
+// Firestore Security Rules for the portfolio.
+//
+// Two collections, two very different rules:
+//
+//   projects - public read. This is a portfolio; the project list is the
+//              whole point of the site and contains nothing private.
+//   messages - WRITE-ONLY from the client. Anyone can submit a message
+//              (including anonymous visitors, so it can't require auth),
+//              but nobody can read, update or delete. Only the project
+//              owner - signed in as the account that owns the Firebase
+//              project - can read submissions.
+//
+// The critical line is `allow create` with no `allow read`. A visitor can
+// push a message and cannot pull the collection back out, so the endpoint
+// can't be used to harvest anyone else's contact form submissions.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    match /projects/{projectId} {
+      // Public: this is the portfolio's own content.
+      allow read: if true;
+
+      // Only the project owner can add or change projects. Managed from the
+      // seed script with admin credentials, which bypasses these rules, but
+      // this closes the door if the site ever ships a write path.
+      allow write: if request.auth != null
+                    && request.auth.token.email == 'YOUR_FIREBASE_OWNER_EMAIL';
+    }
+
+    match /messages/{messageId} {
+      // Write-only from the client. This is the whole access model for
+      // contact submissions.
+      allow create: if request.resource.data.keys().hasAll(['name', 'email', 'message'])
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() <= 100
+                    && request.resource.data.email is string
+                    && request.resource.data.email.size() <= 200
+                    && request.resource.data.message is string
+                    && request.resource.data.message.size() > 0
+                    && request.resource.data.message.size() <= 5000;
+
+      // No read, no update, no delete from the client. Uncomment and fill in
+      // your own address to read submissions in the Firebase console. Note
+      // that console access already bypasses these rules, so this is only
+      // needed if you read messages from inside the app itself.
+      allow read: if request.auth != null
+                  && request.auth.token.email == 'YOUR_FIREBASE_OWNER_EMAIL';
+
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // Anything not explicitly matched above is closed off.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

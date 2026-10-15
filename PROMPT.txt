@@ -1,0 +1,121 @@
+================================================================================
+AGENT PROMPT - BUILD 01 PORTFOLIO HUB
+Copy everything below the line into a new agent session.
+================================================================================
+
+I'm a junior developer in the Philippines building a personal portfolio site.
+This is job-hunting work, not a hobby - it needs to be live and working.
+
+Read D:\Edit Job\portfolio\README.txt and
+D:\Edit Job\portfolio\01-portfolio-hub\README.txt first for full context.
+
+--------------------------------------------------------------------------------
+THE SITUATION
+--------------------------------------------------------------------------------
+Two job postings have hard-gated on having a portfolio:
+  - Inventra Inc. requires React / Next.js / Firebase / TypeScript (all four)
+  - Nimbull won't review applications without live site links
+This site is built specifically in that stack so the requirement is met
+literally rather than hopefully. Please don't substitute another framework.
+
+Working directory: D:\Edit Job\portfolio\01-portfolio-hub
+
+--------------------------------------------------------------------------------
+BUILD SPEC
+--------------------------------------------------------------------------------
+Stack:
+  - Next.js (App Router) + TypeScript + Tailwind
+  - Firebase Auth + Firestore
+  - Deploys to Cloudflare Pages (free, no card)
+
+Pages:
+  1. Home - hero (name, one-line positioning, contact links), projects grid,
+     contact form
+  2. /projects/[slug] - per-project page: the problem, the stack, ONE decision
+     I made and why, live link, repo link
+
+Data:
+  - Projects stored in a Firestore collection called "projects"
+  - Contact form writes to a Firestore collection called "messages"
+  - Small typed data layer, keep it clean
+
+Scope control - IMPORTANT:
+  - Keep it SMALL. Three projects, done properly, beats twelve thin ones.
+  - No contact form spam protection, analytics, dark-mode toggle, cookie
+    banner, test suite, or CI unless trivial. Ship it live, then improve.
+  - I want a deployed URL more than I want perfect code.
+
+The three projects to seed into Firestore:
+  1. "Stock Footage Matcher" - Python. A five-stage pipeline (analyze, caption,
+     match, download, output) that aligns stock footage to a voiceover script
+     using embedding search + LLM matching, with checkpointed state that
+     resumes after failure, and exports OTIO/EDL/XML timelines.
+  2. "Community Reference Site" - WordPress + Elementor. (URL pending - leave a
+     placeholder I can fill in later.)
+  3. "Voice Transcription Tool" - Python. Abstracted STT provider layer across
+     three backends, NumPy-vectorized VAD, non-blocking transcription.
+
+Copy for the blurbs above is deliberately rough. Write the final 2-3 sentence
+pitch for each card yourself - one line on the problem solved, one on the
+stack, one on a real design decision. Those blurbs get pasted straight into
+cover letters, so make them concrete, not generic.
+
+--------------------------------------------------------------------------------
+SECURITY - DO THIS FIRST
+--------------------------------------------------------------------------------
+  - Firebase config goes in NEXT_PUBLIC_* env vars only. API keys in Firebase
+    web config are fine to expose - that's by design. What's NOT fine is a
+    server-side secret, an LLM API key, or an .env committed to the repo.
+  - Verify .gitignore covers .env before the first commit.
+  - Do NOT put any real personal contact details in the repo. Use obvious
+    placeholders like "your-email@example.com" that I will replace.
+
+--------------------------------------------------------------------------------
+DEFINITION OF DONE
+--------------------------------------------------------------------------------
+  [ ] Builds with no type errors and no lint errors
+  [ ] `npm run dev` works
+  [ ] Firestore rules written and deployed - the messages collection must be
+      write-only from the client, readable ONLY by me
+  [ ] .gitignore covers .env
+  [ ] Pushed to GitHub
+  [ ] Deployed to Cloudflare Pages and LIVE
+  [ ] Verified working on mobile viewport, not just desktop
+  [ ] README.md updated with: the live URL, the stack actually used, setup
+      steps, and the 2-3 sentence cover-letter blurb for the site itself
+
+That last one matters. Put the blurb in the README so I can copy-paste it into
+applications instead of rewriting it each time.
+
+--------------------------------------------------------------------------------
+HONESTY REQUIREMENT - NON-NEGOTIABLE
+--------------------------------------------------------------------------------
+This is job-hunting material. Nothing on this site may imply:
+  - a client, agency, or company
+  - paid work
+  - revenue
+  - more than what actually exists
+
+These are self-initiated projects and they should be presented that way. The
+framing I want on the site is roughly "no client work yet - these are problems
+I picked to solve." That reads as initiative, which is honest AND impressive.
+
+If you're unsure whether a claim would survive a recruiter asking "who was this
+for?", don't make the claim. Tell me and I'll answer honestly.
+
+Do not generate fake metrics, fake testimonials, fake logos, or invented
+testimonials/placeholders that could later be mistaken for real.
+
+--------------------------------------------------------------------------------
+TELL ME AS YOU GO
+--------------------------------------------------------------------------------
+Before starting, tell me:
+  1. The next.js version you'll install, and whether create-next-app prompts
+     are set to avoid interactive mode (it will hang otherwise)
+  2. Whether Cloudflare Pages can take a Next.js App Router project directly
+     or whether we should use static export / Pages' build command
+  3. Anything that needs a decision from me (Firebase project creation
+     requires me to log in to the Google console - flag it early, don't wait
+     until you're stuck)
+
+--------------------------------------------------------------------------------
