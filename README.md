@@ -115,18 +115,46 @@ Project links use a `PENDING_*` marker until you have a real URL
 
 ## Deploying
 
-Cloudflare Pages, connected to the GitHub repo:
+Cloudflare Pages, deployed from the CLI:
 
-- **Framework preset:** None
+```bash
+npm run build
+npx wrangler pages deploy out --project-name portfolio-hub --branch main
+```
+
+Needs `CLOUDFLARE_API_TOKEN` and `CLOUDFLARE_ACCOUNT_ID` in the environment
+(see `scripts/deploy.sh`).
+
+Settings this project was created with:
+
 - **Build command:** `npm run build`
 - **Build output directory:** `out`
-- **Node version:** 22 or newer (`.node-version` pins this in the repo)
+- **Node version:** 22 (`.node-version` pins this in the repo)
 
-**Do not add a `public/_redirects` file.** Cloudflare Pages already resolves
-`/projects/:slug` to `slug.html` on its own, so an explicit rule for it is
-redundant — and because Pages served the rewrite as a 308 aimed at the source
-URL, it put every project page into an infinite redirect loop. That fault only
-appeared on the deployed site; it was invisible locally.
+### Why not automatic deploys on push
+
+Two paths were tried and both dead-ended, which is why this is manual:
+
+1. **Cloudflare's own Git integration** — the project was created via the CLI,
+   which permanently locks it to "Direct Upload" mode. Cloudflare rejects the
+   conversion: *"You cannot update the `source` object in a Direct Upload
+   project."* Switching would mean creating a new project and taking a new URL.
+2. **A GitHub Actions workflow** — written, committed, and failed twice with
+   zero steps executed. The cause was not the workflow:
+   *"The job was not started because your account is locked due to a billing
+   issue."* Removing the workflow also meant removing the Cloudflare token from
+   the repo's secrets, which is the better outcome regardless.
+
+If the GitHub billing lock is ever resolved, the manual path keeps working
+either way — this is a two-command deploy, not a fragile setup.
+
+### Do not add a `public/_redirects` file
+
+Cloudflare Pages already resolves `/projects/:slug` to `slug.html` on its own,
+so an explicit rule for it is redundant — and because Pages served the rewrite
+as a 308 aimed at the source URL, it put every project page into an infinite
+redirect loop. That fault only appeared on the deployed site; it was invisible
+locally.
 
 ### Why static export instead of SSR
 
