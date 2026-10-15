@@ -2,25 +2,32 @@
 #
 # WHY THIS EXISTS: the Pages project was created via the Cloudflare CLI, which
 # locks it to "Direct Upload" mode - it can never be converted to Cloudflare's
-# own Git integration. This workflow provides the same outcome (push to main,
+# own Git integration ("You cannot update the `source` object in a Direct
+# Upload project"). This workflow provides the same outcome (push to main, the
 # site updates) by running the CLI deploy from GitHub's runners instead.
 #
 # Required repository secrets (Settings > Secrets and variables > Actions):
 #   CLOUDFLARE_API_TOKEN  - scoped to the Cloudflare account, Pages:Edit
 #   CLOUDFLARE_ACCOUNT_ID - the 32-char account id
 #
-# Deploys are skipped for pushes that only touch documentation, which keeps
-# the free tier's 500 builds/month from being spent on README edits.
+# Optional repository variables - these are public values, not secrets, because
+# they are compiled into the client bundle anyway:
+#   NEXT_PUBLIC_SITE_NAME, NEXT_PUBLIC_GITHUB_URL, NEXT_PUBLIC_CONTACT_EMAIL
 
 name: Deploy to Cloudflare Pages
 
 on:
   push:
     branches: [main]
+    # Docs-only pushes don't need a build. This keeps README edits from
+    # spending the free tier's 500 builds/month.
+    paths-ignore:
+      - "**/*.md"
+      - "**/*.txt"
   workflow_dispatch: # manual trigger from the Actions tab
 
-# Never let two deploys race each other. Without this, two quick pushes can
-# finish out of order and leave the older deployment live.
+# Never let two deploys race. Without this, two quick pushes can finish out
+# of order and leave the older deployment live.
 concurrency:
   group: pages-deploy
   cancel-in-progress: true
@@ -43,28 +50,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Skip deploy for docs-only changes
-        id: changes
-        uses: actions/github-script@v7
-        with:
-          script: |
-            const { data } = await github.rest.repos.compareCommitsWithBasehead({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              base: context.payload.before,
-              head: context.payload.after,
-            });
-            const changed = data.files.map((f) => f.filename);
-            const codeOnly = changed.filter(
-              (f) =>
-                !/^(README|PROMPT|AGENTS)/.test(f) &&
-                !/\.(md|txt)$/i.test(f) &&
-                !/^\.github\//.test(f),
-            );
-            core.setOutput('code_changed', String(codeOnly.length > 0));
-
       - name: Build
-        if: steps.changes.outputs.code_changed == 'true'
         env:
           NEXT_PUBLIC_SITE_NAME: ${{ vars.NEXT_PUBLIC_SITE_NAME }}
           NEXT_PUBLIC_GITHUB_URL: ${{ vars.NEXT_PUBLIC_GITHUB_URL }}
@@ -72,11 +58,10 @@ jobs:
         run: npm run build
 
       - name: Deploy to Cloudflare Pages
-        if: steps.changes.outputs.code_changed == 'true'
-        uses: cloudflare/wrangler-action@v3
+        uses: cloudflare/wrangler-action@v4
         with:
           # Not needed: the CLI token is scoped to the account and used for
-          # both auth and deployment.
+          # both authentication and deployment.
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy out --project-name=portfolio-hub --branch=main --commit-dirty=true
