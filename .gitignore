@@ -46,6 +46,10 @@ ui-debug.log
 # vercel
 .vercel
 
+# wrangler (created by the deploy workflow / local CLI runs)
+.wrangler
+.dev.vars
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
