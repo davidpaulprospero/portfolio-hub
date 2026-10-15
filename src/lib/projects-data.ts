@@ -37,10 +37,7 @@ export const seedProjects: Project[] = [
     blurb:
       "Built a five-stage Python pipeline (analyze, caption, match, download, output) that aligns stock footage to a voiceover script using embedding search for candidates and an LLM as the matcher, then exports OTIO, EDL and XML timelines. The design decision I'd defend in review is the on-disk checkpoint at every stage boundary, so a failure mid-run resumes instead of re-paying for the whole script's embeddings.",
     order: 1,
-    links: [
-      { label: "Live demo", href: "PENDING_DEMO_URL" },
-      { label: "Source", href: "PENDING_REPO_URL" },
-    ],
+    links: [{ label: "Source", href: "https://github.com/davidpaulprospero/matcher" }],
   },
   {
     slug: "community-reference-site",
