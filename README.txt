@@ -1,13 +1,23 @@
 ================================================================================
 01 - PORTFOLIO HUB
 ================================================================================
-STATUS:   built, not yet deployed
+STATUS:   LIVE
 STACK:    Next.js + React + TypeScript + Firebase
 DEPLOY:   Cloudflare Pages  (free, no card, no bandwidth cap, ~500 builds/mo)
 PRIORITY: DAY 1 - build this first, everything else links here
 
-LIVE URL: not deployed yet. See README.md for the full setup, the cover-letter
-          blurb, and the deploy settings. Once deployed, put the URL here.
+LIVE URL: https://portfolio-hub-elv.pages.dev
+
+TODO BEFORE SENDING THE LINK TO ANYONE:
+  - The site currently shows PLACEHOLDER values: "Your Name",
+    your-email@example.com, and example GitHub/LinkedIn URLs. Set these as
+    Cloudflare Pages environment variables (see README.md) - do NOT put a real
+    email in the committed source, the repo is public.
+  - The three project links render as "(soon)". Replace the PENDING_* values
+    in src/lib/projects-data.ts and re-run `npm run seed`.
+  - Firebase is not connected yet (Google Cloud project quota blocked it).
+    The site degrades gracefully: projects render from bundled data and the
+    contact form shows "being connected" instead of breaking.
 
 
 --------------------------------------------------------------------------------
@@ -55,8 +65,8 @@ PER-FOLDER CONVENTION
 --------------------------------------------------------------------------------
 When this is done, this folder needs:
   - the running source                                       [done]
-  - the deployed live URL in this README                     [pending deploy]
-  - a 2-3 sentence blurb, copy-pasteable into a cover letter [in README.md]
+  - the deployed live URL in this README                     [done]
+  - a 2-3 sentence blurb, copy-pasteable into a cover letter [done, in README.md]
 
 
 --------------------------------------------------------------------------------

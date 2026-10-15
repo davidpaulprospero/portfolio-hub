@@ -2,7 +2,7 @@
 
 Personal portfolio site — the central hub every job application links to.
 
-**Live URL:** _not deployed yet — see "Deploying" below_
+**Live URL:** https://portfolio-hub-elv.pages.dev
 
 Built specifically to satisfy the Inventra Inc. requirement of
 **React / Next.js / Firebase / TypeScript** literally rather than hopefully:
@@ -120,7 +120,13 @@ Cloudflare Pages, connected to the GitHub repo:
 - **Framework preset:** None
 - **Build command:** `npm run build`
 - **Build output directory:** `out`
-- **Node version:** 22 or newer (set `NODE_VERSION` env var)
+- **Node version:** 22 or newer (`.node-version` pins this in the repo)
+
+**Do not add a `public/_redirects` file.** Cloudflare Pages already resolves
+`/projects/:slug` to `slug.html` on its own, so an explicit rule for it is
+redundant — and because Pages served the rewrite as a 308 aimed at the source
+URL, it put every project page into an infinite redirect loop. That fault only
+appeared on the deployed site; it was invisible locally.
 
 ### Why static export instead of SSR
 
@@ -183,9 +189,10 @@ Replace `YOUR_FIREBASE_OWNER_EMAIL` in both places before deploying.
   browser. The offered `npm audit fix --force` would *downgrade*
   `eslint-config-next` to 14.x, which breaks Next 16 linting — so it has
   deliberately not been applied. Revisit when upstream ships a fixed `braces`.
-- **RSC prefetch 404s in dev.** The static export writes `.txt` route payloads
-  that some static servers don't resolve; `public/_redirects` handles it on
-  Cloudflare Pages. Harmless either way — navigation falls back to a full load.
+- **RSC prefetch 404s in some setups.** The static export writes `.txt` route
+  payloads that `npx serve` (used by `npm run start`) doesn't resolve, so local
+  preview logs a 404 on prefetch. Cloudflare Pages handles it correctly and
+  navigation falls back to a full page load regardless — harmless.
 - `next-env.d.ts` is gitignored, per the create-next-app default.
 
 ---
