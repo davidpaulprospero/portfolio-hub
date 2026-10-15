@@ -33,6 +33,12 @@ yarn-error.log*
 # env files (can opt-in for committing if needed)
 .env*
 
+# firebase CLI - debug logs can contain auth tokens
+firebase-debug.log
+firestore-debug.log
+ui-debug.log
+.firebase/
+
 # vercel
 .vercel
 
