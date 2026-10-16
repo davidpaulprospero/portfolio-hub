@@ -61,6 +61,7 @@ export const seedProjects: Project[] = [
     links: [
       { label: "Live site", href: "https://davidprospero.rf.gd" },
       { label: "REST endpoint", href: "https://davidprospero.rf.gd/wp-json/refsite/v1/resources" },
+      { label: "Source", href: "https://github.com/davidpaulprospero/refsite" },
     ],
   },
   {
