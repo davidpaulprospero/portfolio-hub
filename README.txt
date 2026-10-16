@@ -2,7 +2,7 @@
 01 - PORTFOLIO HUB
 ================================================================================
 STATUS:   LIVE
-STACK:    Next.js + React + TypeScript + Firebase
+STACK:    Next.js + React + TypeScript  (Firebase written but NOT connected)
 DEPLOY:   Cloudflare Pages  (free, no card, no bandwidth cap, ~500 builds/mo)
 PRIORITY: DAY 1 - build this first, everything else links here
 
@@ -13,11 +13,19 @@ TODO BEFORE SENDING THE LINK TO ANYONE:
     your-email@example.com, and example GitHub/LinkedIn URLs. Set these as
     Cloudflare Pages environment variables (see README.md) - do NOT put a real
     email in the committed source, the repo is public.
-  - The three project links render as "(soon)". Replace the PENDING_* values
+  - Project 3 (voice transcription) links to a real public repo:
+    github.com/davidpaulprospero/transcription-tool
+  - Project 1 (stock footage matcher) has NO public link by choice - the repo
+    is private because the work involved client material.
+  - Project 2 (WordPress) still renders "(soon)". Replace PENDING_WORDPRESS_URL
     in src/lib/projects-data.ts and re-run `npm run seed`.
-  - Firebase is not connected yet (Google Cloud project quota blocked it).
-    The site degrades gracefully: projects render from bundled data and the
-    contact form shows "being connected" instead of breaking.
+  - Firebase is NOT connected (Google Cloud project quota blocked creation).
+    The client, data layer and security rules are all written, but none of it
+    is live. The site degrades gracefully: projects render from bundled data
+    and the contact form shows "being connected" instead of breaking.
+    => Do NOT tell Inventra the site "runs on Firebase" or that security
+       rules are "deployed". Say the stack is Next.js/React/TypeScript and
+       that Firestore is written but not yet connected.
 
 
 --------------------------------------------------------------------------------

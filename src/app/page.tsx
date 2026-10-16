@@ -66,8 +66,8 @@ export default function HomePage() {
 
       <footer className="mt-24 border-t border-border pt-8 text-sm text-muted">
         <p>
-          Built with Next.js, TypeScript, Tailwind and Firebase.{" "}
-          <Link href="https://github.com" className="underline hover:text-accent">
+          Built with Next.js, TypeScript and Tailwind.{" "}
+          <Link href={siteConfig.github} className="underline hover:text-accent">
             Source on GitHub
           </Link>
         </p>

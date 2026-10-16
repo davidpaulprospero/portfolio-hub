@@ -90,16 +90,18 @@ export default async function ProjectPage({ params }: PageProps<"/projects/[slug
           </div>
         </section>
 
-        <section className="mt-10">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
-            Links
-          </h2>
-          <div className="mt-3 flex flex-wrap gap-3">
-            {project.links.map((link) => (
-              <ProjectLink key={link.href} link={link} />
-            ))}
-          </div>
-        </section>
+        {project.links.length > 0 && (
+          <section className="mt-10">
+            <h2 className="text-sm font-semibold uppercase tracking-wide text-muted">
+              Links
+            </h2>
+            <div className="mt-3 flex flex-wrap gap-3">
+              {project.links.map((link) => (
+                <ProjectLink key={link.href} link={link} />
+              ))}
+            </div>
+          </section>
+        )}
       </article>
 
       <footer className="mt-16 border-t border-border pt-8">

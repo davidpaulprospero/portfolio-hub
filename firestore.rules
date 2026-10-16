@@ -15,6 +15,10 @@ rules_version = '2';
 // The critical line is `allow create` with no `allow read`. A visitor can
 // push a message and cannot pull the collection back out, so the endpoint
 // can't be used to harvest anyone else's contact form submissions.
+//
+// Replace the owner email below before deploying. It must match the Google
+// account that owns the Firebase project. Console access already bypasses
+// these rules, so this only gates reads from inside the app.
 
 service cloud.firestore {
   match /databases/{database}/documents {

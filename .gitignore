@@ -53,3 +53,7 @@ ui-debug.log
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Playwright MCP scratch output: console logs, page snapshots and
+# screenshots from browser automation. Tooling output, not project content.
+.playwright-mcp/

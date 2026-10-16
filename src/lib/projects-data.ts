@@ -37,7 +37,12 @@ export const seedProjects: Project[] = [
     blurb:
       "Built a five-stage Python pipeline (analyze, caption, match, download, output) that aligns stock footage to a voiceover script using embedding search for candidates and an LLM as the matcher, then exports OTIO, EDL and XML timelines. The design decision I'd defend in review is the on-disk checkpoint at every stage boundary, so a failure mid-run resumes instead of re-paying for the whole script's embeddings.",
     order: 1,
-    links: [{ label: "Source", href: "https://github.com/davidpaulprospero/matcher" }],
+    // No public link for this one. The implementation grew out of work that
+    // involved client material, so the repository is not published - linking it
+    // from here would misrepresent that. The project itself is mine and is
+    // described above; it just isn't open source. Don't add a repo URL to this
+    // entry without checking that the repo can stand on its own first.
+    links: [],
   },
   {
     slug: "community-reference-site",
@@ -59,20 +64,23 @@ export const seedProjects: Project[] = [
   {
     slug: "voice-transcription-tool",
     title: "Voice Transcription Tool",
-    tagline: "One transcription interface across three providers, with silence trimmed.",
+    tagline: "Silence-trimming transcription that keeps your timestamps honest.",
     problem:
-      "Speech-to-text providers disagree on cost, latency, and which one copes with a noisy recording, so the practical result of picking one is that you find out it was the wrong choice halfway through a batch. Two smaller problems came up along the way: most providers bill for silence, and a transcription that blocks the interface for the length of the file makes a tool feel broken. I built this to solve both the provider-lock-in problem and the two smaller ones.",
-    stack: ["Python", "NumPy", "STT provider abstraction", "Async I/O"],
+      "Transcribing one file is easy - it's a function call. Transcribing a batch is where it turns into an engineering problem: a model on a long recording can run out of memory or stall on a bad file, one failure shouldn't abandon the other thirty, and re-running a finished batch because the process died is wasted work. Underneath all of it sits a smaller problem that makes the output quietly wrong: the silence in a recording is still audio the model has to read.",
+    stack: ["Python", "faster-whisper", "pydub", "pytest"],
     decision: {
-      what: "Vectorise voice-activity detection in NumPy instead of running a per-frame Python loop.",
-      why: "The first VAD pass walked audio frame by frame in Python, and on an hour-long recording the detection step cost more wall-clock than the transcription it was meant to enable. Moving the frame maths into NumPy made it a handful of array operations over the whole signal, which brought detection well under the transcription time and stopped it being the bottleneck. It also made trimming cheap enough to run per segment rather than per file.",
+      what: "Trim the silence before transcription, but return the speech regions alongside the trimmed audio and remap every returned timestamp back to the original timeline.",
+      why: "Trimming is the obvious win - less audio in means less to process - but it silently breaks everything downstream, because the model reports timestamps against the shortened file and the subtitles drift earlier and earlier against the original recording. The tempting fix is to stop trimming. Instead the trimmer returns the speech regions it found, and a separate pass maps each one back to where it sat in the original, accounting for the crossfades between concatenated regions. The output stays correct no matter how aggressively the audio was cut, and the correctness lives in one testable function rather than being spread across every caller.",
     },
     blurb:
-      "Built a Python voice transcription tool around an abstracted STT provider layer running across three backends, so the provider can be swapped without touching calling code. The design decision I'd point to is a NumPy-vectorised voice-activity detection pass that trims silence before it reaches the provider - it cut per-frame Python overhead so much that trimming became cheap enough to run per segment.",
+      "Built a Python transcription pipeline around a single local speech-to-text model, with the reliability layer that actually decides whether a batch finishes: a result cache so an interrupted run resumes instead of redoing work, a delta-aware index that only re-transcribes the parts of a recording that changed, and a retry budget that classifies failures as out-of-memory, transient, timeout or permanent so it retries the recoverable ones and stops on the rest. The design decision I'd defend in review is trimming silence before transcription and then remapping every timestamp back onto the original timeline, so the speedup doesn't come at the cost of subtitles that no longer line up.",
     order: 3,
     links: [
-      { label: "Live demo", href: "PENDING_STT_URL" },
-      { label: "Source", href: "PENDING_STT_REPO_URL" },
+      {
+        label: "Live demo",
+        href: "https://transcription-tool-gvqlzxgdcddktnbpea2vwx.streamlit.app/",
+      },
+      { label: "Source", href: "https://github.com/davidpaulprospero/transcription-tool" },
     ],
   },
 ];

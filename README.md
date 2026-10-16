@@ -4,9 +4,11 @@ Personal portfolio site — the central hub every job application links to.
 
 **Live URL:** https://portfolio-hub-elv.pages.dev
 
-Built specifically to satisfy the Inventra Inc. requirement of
-**React / Next.js / Firebase / TypeScript** literally rather than hopefully:
-all four are in real use here, not stubbed.
+Built to satisfy the Inventra Inc. requirement of
+**React / Next.js / Firebase / TypeScript** as far as a quota wall allows:
+React, Next.js and TypeScript are in real production use here. Firebase is
+written and wired but **not connected** — see [What is NOT in use](#what-is-not-in-use).
+Three of the four are live; don't paper over the fourth.
 
 ---
 
@@ -26,44 +28,59 @@ testimonials, or fake logos. If a claim is ambiguous, leave it out.
 ## Cover-letter blurb (copy-paste this)
 
 > I build and ship small, complete tools end to end. My portfolio at
-> **[LIVE_URL]** runs on Next.js 16 (App Router), TypeScript, Tailwind and
-> Firebase — the same stack Inventra lists, wired properly rather than
-> stubbed: projects load from a typed Firestore data layer, and a deployed set
-> of Firestore Security Rules makes the contact form write-only, so submissions
-> can be submitted publicly but never read by anyone but me. The three projects
-> on it are mine, not client work: a Python pipeline that matches stock footage
-> to a voiceover script with resumable checkpointing and OTIO/EDL/XML export, a
-> WordPress + Elementor site modelled on custom post types so content stays
-> queryable, and a voice transcription tool that abstracts three STT providers
-> behind one interface with a NumPy-vectorised silence trimmer. Each one is
-> written up with the single design decision I'd defend in review.
+> **[LIVE_URL]** runs on Next.js 16 (App Router), TypeScript and Tailwind,
+> deployed as a static export to Cloudflare Pages. It reads its content
+> through a typed data layer with a bundled fallback, so the site renders even
+> if the database is unreachable — the same resilience I'd want in production.
+> The three projects on it are mine, not client work: a Python pipeline that
+> matches stock footage to a voiceover script with resumable checkpointing and
+> OTIO/EDL/XML export, a WordPress + Elementor site modelled on custom post
+> types so content stays queryable, and a transcription pipeline that trims
+> silence before transcription and then remaps the timestamps back onto the
+> original timeline so the speedup doesn't leave you with subtitles that no
+> longer line up. Each one is written up with the single design decision I'd
+> defend in review.
 
 **Shorter version, if the letter is tight:**
 
 > I build and ship small, complete tools end to end — my portfolio at
-> **[LIVE_URL]** runs on Next.js 16, TypeScript, Tailwind and Firebase, the
-> stack Inventra lists, with Firestore Security Rules making the contact form
-> write-only. The three projects on it are mine, not client work: a Python
+> **[LIVE_URL]** runs on Next.js 16, TypeScript and Tailwind, deployed as a
+> static export. The three projects on it are mine, not client work: a Python
 > stock-footage matching pipeline with resumable checkpointing, a WordPress +
-> Elementor site built on custom post types, and a transcription tool
-> abstracting three STT providers behind one interface.
+> Elementor site built on custom post types, and a transcription pipeline with
+> result caching and error-classified retries so an interrupted batch resumes
+> rather than restarting.
 
 ---
 
 ## Stack actually used
 
-| Layer      | Choice                                       |
-| ---------- | -------------------------------------------- |
-| Framework  | Next.js 16.4.1, App Router                   |
-| Language   | TypeScript 5 (strict)                        |
-| Styling    | Tailwind CSS v4                               |
-| Database   | Firebase Firestore (project data + messages) |
-| Hosting    | Cloudflare Pages (free tier, static export)  |
+| Layer      | Choice                                              |
+| ---------- | --------------------------------------------------- |
+| Framework  | Next.js 16.4.1, App Router                          |
+| Language   | TypeScript 5 (strict)                               |
+| Styling    | Tailwind CSS v4                                      |
+| Content    | Bundled TypeScript module (`src/lib/projects-data.ts`) |
+| Hosting    | Cloudflare Pages (free tier, static export)         |
 
-Firebase Auth is available in the SDK but the public site does not currently
-sign anyone in — the contact form is deliberately unauthenticated so any
-visitor can send a message, with read access restricted by Security Rules
-instead. Don't claim a sign-in flow exists.
+### What is NOT in use
+
+**Firebase is not connected.** The Firestore client is written and wired
+(`src/lib/firebase.ts`, `src/lib/projects.ts`, `firestore.rules`), but there
+is no live Google Cloud project behind it — project creation has been blocked
+on a Google Cloud quota. Until that changes:
+
+- Project content is served from the bundled TypeScript module.
+- The contact form renders *"The contact form is being connected. Email me
+  directly in the meantime."* — `isFirebaseConfigured` is false.
+
+So do not describe the site as running on Firebase, and do not claim the
+security rules are deployed. They're written and reviewed, not active.
+`scripts/firebase-setup.sh` finishes the job if the quota clears.
+
+Also not in use: no authentication anywhere. There is no sign-in flow, no
+user accounts, and no admin area. The README previously described a Firebase
+Auth integration; that was aspirational and has been removed.
 
 ---
 
@@ -109,7 +126,11 @@ defaults are obvious placeholders on purpose.
 
 Project links use a `PENDING_*` marker until you have a real URL
 (`isPendingLink()` in `src/lib/projects-data.ts`); the UI renders those as
-"(soon)" rather than a link that 404s under a recruiter's finger.
+"(soon)" rather than a link that 404s under a recruiter's finger. Only the
+WordPress project is still pending. The transcription tool links to
+[transcription-tool](https://github.com/davidpaulprospero/transcription-tool),
+and the stock footage matcher has no link at all by choice — see the comment
+on that entry in `projects-data.ts`.
 
 ---
 
@@ -168,9 +189,13 @@ them are a good thing to hang a site you need to be reliably live on.
 
 So `next.config.ts` sets `output: "export"`, which emits a plain `out/` folder
 of HTML/CSS/JS. Cloudflare Pages serves that natively — no adapter, no beta,
-no runtime, and no cost or outage surface. It also fits the data design: with
-no server, Firestore is read from the browser, which is why the `projects`
-collection has public read rules and the `messages` collection is write-only.
+no runtime, and no cost or outage surface.
+
+It also shaped the data design. With no server, any database read happens in
+the browser, which is why the `projects` collection is public-read and the
+`messages` collection is write-only in `firestore.rules`. Since Firebase
+isn't connected yet, the site currently renders from the bundled module —
+but the rules are written for the moment it is.
 
 **The trade-off, stated plainly:** because every route is rendered at build
 time, `generateStaticParams` cannot ask Firestore which projects exist. The
@@ -182,9 +207,14 @@ bundled data) but won't be in the database.
 
 ---
 
-## Firestore Security Rules
+## Firestore Security Rules (written, not deployed)
 
-See [`firestore.rules`](./firestore.rules). The shape of it:
+See [`firestore.rules`](./firestore.rules). **These are not currently active** —
+there is no Firebase project to deploy them to. The owner email placeholder is
+already filled in, so `firebase deploy --only firestore:rules` is all that
+remains once a project exists.
+
+The design, for whoever picks this up:
 
 - `projects` — public read (it *is* the portfolio), owner-only write.
 - `messages` — **`allow create` only**. Anyone can submit; nobody can read,
@@ -193,7 +223,10 @@ See [`firestore.rules`](./firestore.rules). The shape of it:
   endpoint cannot be used to harvest other visitors' contact submissions.
 - Everything else is denied by the catch-all `match /{document=**}`.
 
-Replace `YOUR_FIREBASE_OWNER_EMAIL` in both places before deploying.
+The write-only model is the interesting part: a public contact form with public
+read access would let anyone query the collection and harvest every visitor's
+email address. Deployed as written, the endpoint accepts input and gives
+nothing back.
 
 ---
 
