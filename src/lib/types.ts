@@ -29,8 +29,8 @@ export interface Project {
   /** The short 2-3 sentence pitch. Goes on the card. */
   blurb: string;
   /**
-   * True while a required URL (e.g. the WordPress site) has not been filled in
-   * yet. The UI shows a placeholder instead of a dead link.
+   * True while a required URL has not been filled in yet. The UI shows a
+   * placeholder instead of a dead link.
    */
   pendingUrl?: boolean;
   links: ProjectLink[];

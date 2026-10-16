@@ -45,21 +45,23 @@ export const seedProjects: Project[] = [
     links: [],
   },
   {
-    slug: "community-reference-site",
-    title: "Community Reference Site",
+    slug: "transcription-reference-site",
+    title: "WordPress Reference Site",
     tagline: "A WordPress + Elementor reference site built to learn the stack.",
     problem:
-      "WordPress and Elementor are everywhere in agency and small-business work, and I had only used them as an occasional content editor. I wanted to actually build and maintain a site on the stack - theme structure, custom post types, Elementor's template system, the media library, backups - rather than claim familiarity with it. I picked a community-information topic because the content requirements are real and I would have to keep it actually accurate.",
+      "WordPress and Elementor are everywhere in agency and small-business work, and I had only used them as an occasional content editor. I wanted to actually build and maintain a site on the stack - theme structure, custom post types, Elementor's template system, the media library, backups - rather than claim familiarity with it. The subject is reference notes for my own transcription tool: the answers already existed in my head and in the tests, and writing them down was the cheapest way to check they were actually right. It gave the content model a real corpus to work against instead of three lorem-ipsum posts.",
     stack: ["WordPress", "Elementor", "PHP", "Custom post types", "MySQL"],
     decision: {
       what: "Model the content as custom post types instead of building pages out of page-builder templates.",
-      why: "Elementor templates are quick to build and painful to maintain: the content ends up locked inside a template, so listing or filtering a set of entries means scraping layout JSON. Registering custom post types kept the data queryable and left the page builder responsible only for presentation. It cost more setup up front and meant the templates stayed reusable when the content set changed.",
+      why: "Elementor templates are quick to build and painful to maintain: the content ends up locked inside a template, so listing or filtering a set of entries means scraping layout JSON. Registering custom post types kept the data queryable and left the page builder responsible only for presentation. It cost more setup up front and meant the templates stayed reusable when the content set changed. One query helper is the single definition of how entries are filtered, and the archive, the shortcode and the public REST endpoint all route through it, so a third way to list entries cannot drift from the other two.",
     },
     blurb:
-      "Built a WordPress + Elementor community reference site to learn the stack properly - theme structure, custom post types, and queryable content rather than content trapped inside page-builder templates. The one decision I'd call out is using custom post types for the content so pages stayed queryable and the Elementor templates stayed reusable instead of becoming one-off layouts.",
+      "Built a WordPress + Elementor reference site to learn the stack properly - theme structure, custom post types, and queryable content rather than content trapped inside page-builder templates. The one decision I'd call out is using custom post types for the content so pages stayed queryable and the Elementor templates stayed reusable instead of becoming one-off layouts. The plugin and theme are both mine; WordPress and Elementor are free software I downloaded.",
     order: 2,
-    links: [{ label: "Live site", href: "PENDING_WORDPRESS_URL" }],
-    pendingUrl: true,
+    links: [
+      { label: "Live site", href: "https://davidprospero.rf.gd" },
+      { label: "REST endpoint", href: "https://davidprospero.rf.gd/wp-json/refsite/v1/resources" },
+    ],
   },
   {
     slug: "voice-transcription-tool",

@@ -17,8 +17,10 @@ TODO BEFORE SENDING THE LINK TO ANYONE:
     github.com/davidpaulprospero/transcription-tool
   - Project 1 (stock footage matcher) has NO public link by choice - the repo
     is private because the work involved client material.
-  - Project 2 (WordPress) still renders "(soon)". Replace PENDING_WORDPRESS_URL
-    in src/lib/projects-data.ts and re-run `npm run seed`.
+  - Project 2 (WordPress) links to the live site at
+    https://davidprospero.rf.gd and to its public REST endpoint. Its slug is
+    `transcription-reference-site` (renamed from `community-reference-site` to
+    match what the site actually is - the old slug is referenced nowhere else).
   - Firebase is NOT connected (Google Cloud project quota blocked creation).
     The client, data layer and security rules are all written, but none of it
     is live. The site degrades gracefully: projects render from bundled data
