@@ -92,7 +92,15 @@ export const seedProjects: Project[] = [
     order: 3,
     links: [
       {
-        label: "Live demo",
+        // The label carries the wait time on purpose. Streamlit Community Cloud
+        // sleeps this app after inactivity, and a cold visitor gets a blank
+        // page for roughly a minute while the container starts - measured, not
+        // guessed. Stating it here means the person clicking the link knows to
+        // wait, instead of deciding the demo is broken and moving on. The
+        // matcher demo's label is left plain because its cold start is a
+        // comparable ~1 min but it shows a live progress indicator rather than
+        // a blank page.
+        label: "Live demo (allow ~1 min to load)",
         href: "https://transcription-tool-gvqlzxgdcddktnbpea2vwx.streamlit.app/",
       },
       { label: "Source", href: "https://github.com/davidpaulprospero/transcription-tool" },
