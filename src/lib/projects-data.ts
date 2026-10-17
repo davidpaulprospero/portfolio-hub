@@ -26,23 +26,28 @@ export const seedProjects: Project[] = [
     stack: [
       "Python",
       "Embeddings",
-      "LLM matching",
-      "LLM-as-judge",
+      "ONNX Runtime",
+      "Streamlit",
       "OTIO / EDL / XML",
     ],
     decision: {
-      what: "Checkpoint every stage boundary to disk instead of re-running the whole pipeline after a failure.",
-      why: "The first version re-ran from stage one on any error, and a mid-run LLM timeout meant re-paying for embedding the entire script. Because the stages are sequential and each one's output is a clean input to the next, persisting state at the boundaries turns a failed run into a resume. The second design consequence was that I could then make each stage independently retryable, which is what made the pipeline survivable against flaky network calls at all.",
+      what: "Over-fetch the candidate pool, then cap how many clips any one source video can contribute - rather than capping after retrieving exactly the number needed.",
+      why: "Plain top-k is dominated by whichever source happens to have the most clips: ten near-identical beach shots take all ten slots, and a shoot with more clips wins on luck rather than merit. The obvious fix is to cap per source after retrieving exactly k, and it does not work - once the top k are all from one source there is nothing left to diversify from, so the only remedy is to enlarge k and try again. So the search fetches twice what it needs and caps within that window. The second consequence was bigger: once the rule can be broken, it cannot be absolute. Hard-blocking one source per ten-minute window left four of fourteen lines with no clip at all, because a short script sits entirely inside one window and exhausts the corpus. A hole in an edit is worse than a repeated shot, so a rule that cannot be satisfied now degrades to a penalty and flags the line rather than vetoing it.",
     },
     blurb:
-      "Built a five-stage Python pipeline (analyze, caption, match, download, output) that aligns stock footage to a voiceover script using embedding search for candidates and an LLM as the matcher, then exports OTIO, EDL and XML timelines. The design decision I'd defend in review is the on-disk checkpoint at every stage boundary, so a failure mid-run resumes instead of re-paying for the whole script's embeddings.",
+      "Built a pipeline that picks stock footage for each voiceover line and explains why - over-fetching the candidate pool so no single source can dominate, scaling the pool size to how specific each line is, and applying reuse and variety rules as penalties rather than vetoes so a short script can't leave gaps in the timeline. Built to run on a free host with no API key: local ONNX embeddings, measured at 226MB against a 512MB tier. The one-line version of the decision I'd defend in review is over-fetching before diversifying, because capping after exactly k has nothing left to cap with.",
     order: 1,
-    // No public link for this one. The implementation grew out of work that
-    // involved client material, so the repository is not published - linking it
-    // from here would misrepresent that. The project itself is mine and is
-    // described above; it just isn't open source. Don't add a repo URL to this
-    // entry without checking that the repo can stand on its own first.
-    links: [],
+    // The full pipeline grew out of work that involved client material, so THAT
+    // repository is not published and linking it would misrepresent it. What is
+    // linked here is the standalone demo, which was written to run on a free
+    // host with no API key and can be read on its own: it uses a synthetic,
+    // seeded corpus rather than any real footage or client data. The demo is
+    // not the full pipeline and the copy above does not claim it is - the
+    // checkpointing, timeline export and LLM judge are absent from it by
+    // design, and the repo's README says so.
+    links: [
+      { label: "Source", href: "https://github.com/davidpaulprospero/matcher-demo" },
+    ],
   },
   {
     slug: "transcription-reference-site",
