@@ -29,8 +29,25 @@ export const siteConfig: SiteConfig = {
   about:
     process.env.NEXT_PUBLIC_ABOUT ??
     "I build small, complete tools end to end - a Python pipeline, a WordPress site, a typed Next.js frontend - and I care about the one design decision that makes each of them hold up. Everything on this site is a project I started myself to solve a problem I ran into. No client work yet.",
-  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "your-email@example.com",
-  github: process.env.NEXT_PUBLIC_GITHUB_URL ?? "https://github.com/your-handle",
-  linkedin:
-    process.env.NEXT_PUBLIC_LINKEDIN_URL ?? "https://linkedin.com/in/your-handle",
+  email: process.env.NEXT_PUBLIC_CONTACT_EMAIL ?? "",
+  github: process.env.NEXT_PUBLIC_GITHUB_URL ?? "",
+  linkedin: process.env.NEXT_PUBLIC_LINKEDIN_URL ?? "",
 };
+
+/**
+ * True when a contact detail is still the unconfigured placeholder.
+ *
+ * WHY EMPTY INSTEAD OF A PLACEHOLDER STRING
+ * The defaults used to be `your-email@example.com` and
+ * `https://linkedin.com/in/your-handle`, on the reasoning that an obvious
+ * placeholder is safe to commit. It is safe in the repo and wrong on the site:
+ * the UI rendered them as ordinary links, so a public visitor saw a working
+ * "LinkedIn" button pointing at a profile that is not mine. A recruiter
+ * clicking it gets someone else's feed.
+ *
+ * So unset values are now empty strings and the UI omits those links entirely
+ * (see `isConfigured` below). Nothing dead renders; nothing unowned is claimed.
+ */
+export function isConfigured(value: string): boolean {
+  return value.trim().length > 0 && !value.includes("your-handle") && !value.includes("example.com");
+}
