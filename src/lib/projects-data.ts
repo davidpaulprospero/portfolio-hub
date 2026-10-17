@@ -52,6 +52,7 @@ export const seedProjects: Project[] = [
     // match the demo rather than the larger project - do not add any of those
     // back without also changing what the linked repo actually contains.
     links: [
+      { label: "Live demo", href: "https://stock-footage-matcher.onrender.com" },
       { label: "Source", href: "https://github.com/davidpaulprospero/matcher-demo" },
     ],
   },
