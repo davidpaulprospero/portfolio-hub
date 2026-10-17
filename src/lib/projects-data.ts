@@ -20,7 +20,8 @@ export const seedProjects: Project[] = [
   {
     slug: "stock-footage-matcher",
     title: "Stock Footage Matcher",
-    tagline: "A pipeline that cuts stock footage to a voiceover script.",
+    tagline:
+      "A pipeline that picks stock footage for each line of a voiceover, and shows why it chose it.",
     problem:
       "Cutting stock footage to a voiceover by hand is slow and inconsistent: you read the script, search a stock library, judge whether a shot actually fits the line, then place it on a timeline. The judgement is the slow part. I wanted to automate the matching without handing the decision to something that would confidently pick a beach for a line about server latency.",
     stack: [
@@ -28,7 +29,7 @@ export const seedProjects: Project[] = [
       "Embeddings",
       "ONNX Runtime",
       "Streamlit",
-      "OTIO / EDL / XML",
+      "NumPy",
     ],
     decision: {
       what: "Over-fetch the candidate pool, then cap how many clips any one source video can contribute - rather than capping after retrieving exactly the number needed.",
@@ -41,10 +42,15 @@ export const seedProjects: Project[] = [
     // repository is not published and linking it would misrepresent it. What is
     // linked here is the standalone demo, which was written to run on a free
     // host with no API key and can be read on its own: it uses a synthetic,
-    // seeded corpus rather than any real footage or client data. The demo is
-    // not the full pipeline and the copy above does not claim it is - the
-    // checkpointing, timeline export and LLM judge are absent from it by
-    // design, and the repo's README says so.
+    // seeded corpus rather than any real footage or client data.
+    //
+    // The demo is NOT the full pipeline, and nothing above may imply otherwise.
+    // Absent from it by design: timeline export (OTIO/EDL/XML, which needs real
+    // footage on disk to reference), the LLM-as-judge reranker (an unpaid key
+    // behind a public URL is an open tab), the download and caption stages, and
+    // the stage-boundary checkpointing. The stack and tagline are written to
+    // match the demo rather than the larger project - do not add any of those
+    // back without also changing what the linked repo actually contains.
     links: [
       { label: "Source", href: "https://github.com/davidpaulprospero/matcher-demo" },
     ],
